@@ -91,7 +91,9 @@ namespace SLAE_calc
             int NumOfEqn = int.Parse(tb_numofeqn.Text);
             SLAE slae = new SLAE(NumOfEqn);
             Panel1.Children.Clear();
-
+            TextBox[] tb = new TextBox[NumOfEqn*(NumOfEqn + 1)];
+            int j_end = 0;
+            
             for (int i = 0; i < NumOfEqn; i++)
             {
                 StackPanel sp = new StackPanel
@@ -103,11 +105,10 @@ namespace SLAE_calc
                 for (int j = 0; j < NumOfEqn + 1; j++)
                 {
                     //Добавление TextBox куда вводятся коэф. матрицы
-                       //Можно прокачать, чтоб не удалялись уже введенные значения!
-                    sp.Children.Add(new TextBox
-                    {
-                        Text = $"{0}"
-                    });
+                    //Можно прокачать, чтоб не удалялись уже введенные значения! 
+                    tb[j + j_end] = new TextBox();
+                    tb[j + j_end].Text = "0";
+                    sp.Children.Add(tb[j + j_end]);
 
                     //Добавление TextBlock'ов переменных
                     if (j < NumOfEqn - 1)
@@ -124,8 +125,10 @@ namespace SLAE_calc
                             Text = $"x{SubIndex(j)} = "
                         });
                     }
-                    
+
+                    slae.M[i, j] = int.Parse(tb[j + j_end].Text);   //Перенос данных с GUI в Matrix
                 }
+                j_end += NumOfEqn;
             }
         }
 

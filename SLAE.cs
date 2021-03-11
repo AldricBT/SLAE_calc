@@ -27,7 +27,12 @@ namespace SLAE_calc
         public int NumOfEqn
         {
             get { return numofeqn; }
-            set { numofeqn = value; }
+            private set { numofeqn = value; }
+        }
+        public Matrix M
+        {
+            get { return m; }
+            set { m = value; }
         }
 
         public void Save(string path)
