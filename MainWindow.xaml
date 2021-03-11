@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SLAE_calc"
         mc:Ignorable="d"
-        Title="SLAE_solver" Height="600" Width="1000"
+        Title="SLAE_solver" Height="600" Width="1000" KeyDown="Window_KeyDown"
         >
     <Window.Resources>        
         <Style TargetType="TextBlock">
@@ -64,8 +64,9 @@
                  HorizontalAlignment="Right"                 
                  Margin="2,2,2,2" 
                  Text="2" 
-                 TextChanged="tb_numofeqn_TextChanged">            
-        </TextBox>
+                 PreviewTextInput="tb_numofeqn_PreviewTextInput" 
+                 PreviewKeyDown="tb_numofeqn_PreviewKeyDown" 
+                 DataObject.Pasting="OnPasting"/>
         <Button x:Name="UpArrow"  FontFamily="Segoe UI Symbol" 
                  Content="&#xE110;"
                  Grid.Column="3"
@@ -81,16 +82,30 @@
                 FontFamily="Segoe UI Symbol" 
                 Content="&#xE1FD;"
                 HorizontalAlignment="Center"/>
-        
+
         <StackPanel x:Name="Panel1" 
                     Grid.Column="1" 
                     HorizontalAlignment="Left" 
                     Grid.Row="4" 
                     Grid.ColumnSpan="4" 
                     VerticalAlignment="Top"
-                    Orientation="Vertical" Initialized="Panel1_Initialized">
+                    Orientation="Vertical" 
+                    Initialized="Panel1_Initialized" 
+                    TextInput="Panel1_Refresh">
         </StackPanel>
-        
+        <Menu Grid.Row="0"
+              Grid.Column="0"
+              Grid.ColumnSpan="5"
+              Height="25"              
+              VerticalAlignment="Top">
+            <MenuItem Header="File" Height="25" FontFamily="Times New Roman" FontSize="16">
+                <MenuItem Header="Load..." ></MenuItem>
+                <MenuItem Header="Save..." Click="MenuItem_Click_1" ></MenuItem>
+                <Separator/>
+                <MenuItem Header="Exit" Click="MenuItem_Click"></MenuItem>
+            </MenuItem>            
+        </Menu>
+
 
 
     </Grid>

@@ -35,6 +35,10 @@ namespace SLAE_calc
             set { m = value; }
         }
 
+        //public void Resize(int NumOfEqn)
+        //{
+        //    m.Resize(NumOfEqn, NumOfEqn + 1);
+        //}
         public void Save(string path)
         {
             save.Save(path);
