@@ -21,9 +21,13 @@ namespace SLAE_calc
     public partial class MainWindow : Window
     {
         public int Max_Eqv = 10;    //Максимальное количество уравнений  
+        int NumOfEqn;
+        SLAE slae;
+        TextBox[] tb;
+
         public MainWindow()
-        {
-            InitializeComponent(); 
+        {            
+            InitializeComponent();            
         }
         /// <summary>
         /// Окно для ввода количества уравнений
@@ -87,11 +91,11 @@ namespace SLAE_calc
         }
 
         private void Panel1_Initialized(object sender, EventArgs e)
-        {
-            int NumOfEqn = int.Parse(tb_numofeqn.Text);
-            SLAE slae = new SLAE(NumOfEqn);
+        {            
+            NumOfEqn = int.Parse(tb_numofeqn.Text);
+            slae = new SLAE(NumOfEqn);
             Panel1.Children.Clear();
-            TextBox[] tb = new TextBox[NumOfEqn*(NumOfEqn + 1)];
+            tb = new TextBox[NumOfEqn*(NumOfEqn + 1)];
             int j_end = 0;
             
             for (int i = 0; i < NumOfEqn; i++)
@@ -108,6 +112,8 @@ namespace SLAE_calc
                     //Можно прокачать, чтоб не удалялись уже введенные значения! 
                     tb[j + j_end] = new TextBox();
                     tb[j + j_end].Text = "0";
+                    tb[j + j_end].Tag = new Point(i,j);
+                    tb[j + j_end].TextChanged += MyTextChange;
                     sp.Children.Add(tb[j + j_end]);
 
                     //Добавление TextBlock'ов переменных
@@ -133,6 +139,18 @@ namespace SLAE_calc
         }
 
         /// <summary>
+        /// Обновляет измененную переменную в Matrix
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MyTextChange(object sender, EventArgs e)
+        {
+            //обновляет измененную переменную в Matrix
+            TextBox tb_help = sender as TextBox;            
+            Point index = (Point)tb_help.Tag;
+            slae.M[(int)index.X, (int)index.Y] = int.Parse(tb_help.Text);
+        }
+        /// <summary>
         /// Запись числа с нижней индексацией
         /// </summary>
         /// <param name="j">Число (максимум двузначное)</param>
@@ -151,24 +169,6 @@ namespace SLAE_calc
             return sub_index;
         }
 
-
-
-        //private void Panel1_SizeChanged(object sender, SizeChangedEventArgs e)
-        //{
-        //    int NumOfEqn = int.Parse(tb_numofeqn.Text);
-        //    SLAE slae = new SLAE(NumOfEqn);
-        //    for (int i = 0; i < NumOfEqn; i++)
-        //    {
-        //        for (int j = 0; j < NumOfEqn + 1; j++)
-        //        {
-        //            Panel1.Children.Add(new TextBox
-        //            {
-        //                Text = "i"
-        //            });
-        //        }
-        //    }
-        //    UpdateLayout();
-        //}
-        //SizeChanged="Panel1_SizeChanged"
+        
     }
 }
