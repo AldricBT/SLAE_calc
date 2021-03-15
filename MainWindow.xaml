@@ -64,9 +64,8 @@
                  HorizontalAlignment="Right"                 
                  Margin="2,2,2,2" 
                  Text="2" 
-                 PreviewTextInput="tb_numofeqn_PreviewTextInput" 
-                 PreviewKeyDown="tb_numofeqn_PreviewKeyDown" 
-                 DataObject.Pasting="OnPasting"/>
+                 PreviewTextInput="Tb_numofeqn_PreviewTextInput"
+                 />
         <Button x:Name="UpArrow"  FontFamily="Segoe UI Symbol" 
                  Content="&#xE110;"
                  Grid.Column="3"
@@ -99,7 +98,7 @@
               Height="25"              
               VerticalAlignment="Top">
             <MenuItem Header="File" Height="25" FontFamily="Times New Roman" FontSize="16">
-                <MenuItem Header="Load..." ></MenuItem>
+                <MenuItem Header="Load..." Click="MenuItem_Click_2" ></MenuItem>
                 <MenuItem Header="Save..." Click="MenuItem_Click_1" ></MenuItem>
                 <Separator/>
                 <MenuItem Header="Exit" Click="MenuItem_Click"></MenuItem>

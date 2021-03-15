@@ -55,6 +55,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Loader.cs" />
     <Compile Include="Saver.cs" />
     <Compile Include="SLAE.cs" />
     <Page Include="MainWindow.xaml">

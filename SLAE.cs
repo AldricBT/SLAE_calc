@@ -11,18 +11,21 @@ namespace SLAE_calc
     {
         private int numofeqn;
         private Saver save;
+        private Loader load;
         private Matrix m;
         public SLAE(int NumOfEqn)
         {
             this.numofeqn = NumOfEqn;
             this.m = new Matrix(NumOfEqn, NumOfEqn + 1);
             this.save = new Saver(m);
+            this.load = new Loader(m);
         }
         public SLAE()
         {
             this.numofeqn = NumOfEqn;
             this.m = new Matrix(3, 4);
             this.save = new Saver(m);
+            this.load = new Loader(m);
         }
         public int NumOfEqn
         {
@@ -44,5 +47,9 @@ namespace SLAE_calc
             save.Save(path);
         }
         
+        public void Load(string path)
+        {
+            load.Load(path);
+        }
     }
 }

@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Microsoft.Win32;
 
 namespace SLAE_calc
 {
@@ -29,7 +30,7 @@ namespace SLAE_calc
         {            
             InitializeComponent();
         }
-        private void tb_numofeqn_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        private void Tb_numofeqn_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             e.Handled = !IsNumOfEqn(e.Text);
             TextBox textBox = (TextBox)sender;
@@ -43,7 +44,7 @@ namespace SLAE_calc
                         {
                             tb_numofeqn.Text = Convert.ToString(Max_Eqv);
                         }
-                        if (int.Parse(tb_numofeqn.Text) < 2)
+                        if (int.Parse(e.Text) < 2)
                         {
                             tb_numofeqn.Text = "2";
                         }
@@ -69,7 +70,7 @@ namespace SLAE_calc
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void UpArrow_Click(object sender, RoutedEventArgs e)
-        {
+        {            
             if (int.Parse(tb_numofeqn.Text) < Max_Eqv)
             {
                 tb_numofeqn.Text = Convert.ToString(int.Parse(tb_numofeqn.Text) + 1);
@@ -113,6 +114,7 @@ namespace SLAE_calc
                     tb[j + j_end] = new TextBox();
                     tb[j + j_end].Text = "0";
                     tb[j + j_end].Tag = new Point(i, j);
+                    tb[j + j_end].PreviewTextInput += MyPrewiewText;
                     tb[j + j_end].TextChanged += MyTextChange;
                     sp.Children.Add(tb[j + j_end]);
 
@@ -148,21 +150,36 @@ namespace SLAE_calc
         {
             //обновляет измененную переменную в Matrix
             TextBox tb_help = sender as TextBox;
-            if (IsNum(tb_help.Text))
+
+            if (IsNum(tb_help.Text) && tb_help.Text != "-")
             {
                 Point index = (Point)tb_help.Tag;
                 slae.M[(int)index.X, (int)index.Y] = int.Parse(tb_help.Text);
-            }            
+            }
         }
-       
+        private void MyPrewiewText(object sender, TextCompositionEventArgs e)
+        {   
+            e.Handled = !IsNum(e.Text);
+        }
+        
+        /// <summary>
+        /// Кнопка Exit в меню
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
         }
 
+        /// <summary>
+        /// Кнопка Save... в меню
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MenuItem_Click_1(object sender, RoutedEventArgs e)
-        {//можно привязать хоткей Ctrl+S
-            Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
+        {//привязан хоткей Ctrl+S
+            SaveFileDialog dlg = new SaveFileDialog();
             dlg.FileName = "test";
             dlg.DefaultExt = ".txt";
             dlg.Filter = "Text documents (.txt)|*.txt";
@@ -174,7 +191,38 @@ namespace SLAE_calc
             }
             
         }
+        /// <summary>
+        /// Кнопка Load...
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MenuItem_Click_2(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog dlg = new OpenFileDialog()
+            {
+                CheckFileExists = false,
+                CheckPathExists = true,
+                Multiselect = false,
+                Title = "Выберите файл"
+            };
 
+            if (dlg.ShowDialog() == true)
+            {
+                string filename = dlg.FileName;
+                slae.Load(filename);
+            }
+
+            //обновление TextBox ов
+            tb_numofeqn.Text = $"{slae.M.GetLength(0)}";
+            Tb_numofeqn_PreviewTextInput(null, null);
+
+
+        }
+        /// <summary>
+        /// Хот-кей Ctrl+S на сохранение
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyboardDevice.Modifiers == (ModifierKeys.Control) && e.Key == Key.S)
@@ -210,7 +258,22 @@ namespace SLAE_calc
         {
             int num;
             bool isnum = int.TryParse(s, out num);
-            return isnum;
+            if (isnum == true)
+            {
+                return true;
+            }
+            else if (s == "")
+            {
+                return false;
+            }
+            else if (s[0] == '-')
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
         /// <summary>
         /// Проверяет адекватность ввода количества уравнений
@@ -255,6 +318,7 @@ namespace SLAE_calc
                     tb[j + j_end] = new TextBox();
                     tb[j + j_end].Text = "0";
                     tb[j + j_end].Tag = new Point(i, j);
+                    tb[j + j_end].PreviewTextInput += MyPrewiewText;
                     tb[j + j_end].TextChanged += MyTextChange;
                     sp.Children.Add(tb[j + j_end]);
 
@@ -279,22 +343,25 @@ namespace SLAE_calc
                 j_end += NumOfEqn;
             }
         }
-
-        private void OnPasting(object sender, DataObjectPastingEventArgs e)
-        {
-            var stringData = (string)e.DataObject.GetData(typeof(string));
-            if (stringData == null || !IsNum(stringData))
-            {
-                e.CancelCommand();
-            }
-        }
         
-        private void tb_numofeqn_PreviewKeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Back || e.Key == Key.Delete)
-            {
-                e.Handled = false;                
-            }
-        }
+
+        //private void OnPasting(object sender, DataObjectPastingEventArgs e)
+        //{
+        //    var stringData = (string)e.DataObject.GetData(typeof(string));
+        //    if (stringData == null || !IsNum(stringData))
+        //    {
+        //        e.CancelCommand();
+        //    }
+        //}DataObject.Pasting="OnPasting"
+
+
+        //private void tb_numofeqn_PreviewKeyDown(object sender, KeyEventArgs e)
+        //{
+        //    if (e.Key == Key.Back || e.Key == Key.Delete)
+        //    {
+        //        e.Handled = false;                
+        //    }
+        //} PreviewKeyDown="tb_numofeqn_PreviewKeyDown" 
+
     }
 }

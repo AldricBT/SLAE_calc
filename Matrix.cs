@@ -31,7 +31,7 @@ namespace SLAE_calc
         {
             get { return Data[i, j]; }
             set { Data[i, j] = value; }
-        }
+        }        
         /// <summary>
         /// Изменяет размер текущего массива
         /// </summary>
@@ -81,6 +81,6 @@ namespace SLAE_calc
                 }
                 Console.WriteLine();
             }
-        }
+        }        
     }
 }

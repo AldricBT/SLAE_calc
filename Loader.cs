@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SLAE_calc
 {
-    public class Saver
+    class Loader
     {
         private Matrix m;
         //public Matrix M
@@ -15,31 +15,33 @@ namespace SLAE_calc
         //    get { return m; }
         //    set { m = value; }
         //}
-        public Saver(Matrix M)
+        public Loader(Matrix M)
         {
             this.m = M;
         }
-        public void Save(string path)
+        public void Load(string path)
         {
-            try
-            {
-                using (StreamWriter sw = new StreamWriter(path))
+            string[] str = null;
+            //try
+            //{
+                using (StreamReader sr = new StreamReader(path))
                 {
-                    sw.WriteLine(m.GetLength(0));
+                int NumOfEqn = int.Parse(sr.ReadLine());
+                    m.Resize(NumOfEqn, NumOfEqn + 1);
                     for (int i = 0; i < m.GetLength(0); i++)
                     {
+                        str = sr.ReadLine().Split(';');
                         for (int j = 0; j < m.GetLength(1); j++)
                         {
-                            sw.Write(m[i,j]+";");
+                            m[i, j] = int.Parse(str[j]);
                         }
-                        sw.WriteLine();
-                    }                    
+                    }
                 }
-            }
-            catch (Exception)
-            {
+            //}
+            //catch (Exception)
+            //{
 
-            }
+            //}
         }
     }
 }
