@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="SLAE_solver" Height="600" Width="1000" KeyDown="Window_KeyDown"
         >
-    <Window.Resources>        
+    <Window.Resources>
         <Style TargetType="TextBlock">
             <Setter Property="HorizontalAlignment" Value="Center" />
             <Setter Property="VerticalAlignment" Value="Stretch" />
@@ -22,21 +22,23 @@
             <Setter Property="HorizontalAlignment" Value="Stretch" />
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="FontFamily" Value="Times New Roman"/>
-            <Setter Property="FontSize" Value="26"/>                        
+            <Setter Property="FontSize" Value="26"/>
             <Setter Property="Height" Value="40"/>
             <Setter Property="Width" Value="40"/>
             <Setter Property="HorizontalContentAlignment" Value="Right"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="FontFamily" Value="Times New Roman"/>           
+            <Setter Property="FontFamily" Value="Times New Roman"/>
         </Style>
-    </Window.Resources>
+    </Window.Resources>    
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="20*"/>
-            <ColumnDefinition Width="200*"/>
-            <ColumnDefinition Width="50*"/>
-            <ColumnDefinition Width="25*"/>
-            <ColumnDefinition Width="479*"/>
+            <ColumnDefinition Width="29"/>
+            <ColumnDefinition Width="286"/>
+            <ColumnDefinition Width="71"/>
+            <ColumnDefinition Width="36"/>
+            <ColumnDefinition Width="498"/>
+            <ColumnDefinition Width="28"/>
+            <ColumnDefinition Width="45"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="30*"/>
@@ -56,22 +58,22 @@
                    Width="230"    
                    TextAlignment="Center"
                    HorizontalAlignment="Center" 
-                   VerticalAlignment="Center" />
-        <TextBox x:Name="tb_numofeqn" 
+                   VerticalAlignment="Center" Margin="16.4,2.6,10.4,3.4" />
+        <TextBox x:Name="Tb_numofeqn" 
                  Grid.Column="2"
                  Grid.Row="1"
                  Grid.RowSpan="2" 
                  HorizontalAlignment="Right"                 
-                 Margin="2,2,2,2" 
+                 Margin="0,7.6,2.4,8.4" 
                  Text="2" 
-                 PreviewTextInput="Tb_numofeqn_PreviewTextInput"
+                 TextChanged="Tb_numofeqn_TextChanged"
                  />
         <Button x:Name="UpArrow"  FontFamily="Segoe UI Symbol" 
                  Content="&#xE110;"
                  Grid.Column="3"
                  Grid.Row="1"
                  HorizontalAlignment="Center"
-                 Margin="0,0,0,0"  
+                 Margin="7.6,4.6,7.4,4.4"  
                  VerticalAlignment="Center" Click="UpArrow_Click"/>
         <Button x:Name="BotArrow"
                 Grid.Column="3"
@@ -80,23 +82,71 @@
                 Click="BotArrow_Click"
                 FontFamily="Segoe UI Symbol" 
                 Content="&#xE1FD;"
-                HorizontalAlignment="Center"/>
+                HorizontalAlignment="Center" Margin="7.6,4.6,7.4,4.4"/>
 
-        
+
         <Menu Grid.Row="0"
               Grid.Column="0"
-              Grid.ColumnSpan="5"
+              Grid.ColumnSpan="7"
               Height="25"              
-              VerticalAlignment="Top">
+              VerticalAlignment="Top" Margin="0,0,-0.4,0">
             <MenuItem Header="File" Height="25" FontFamily="Times New Roman" FontSize="16">
                 <MenuItem Header="Load..." Click="MenuItem_Click_2" ></MenuItem>
                 <MenuItem Header="Save..." Click="MenuItem_Click_1" ></MenuItem>
                 <Separator/>
                 <MenuItem Header="Exit" Click="MenuItem_Click"></MenuItem>
-            </MenuItem>            
+            </MenuItem>
+            <MenuItem Header="Data" Height="25" FontFamily="Times New Roman" FontSize="16">
+                <MenuItem Header="Random" Click="MenuItem_Click_3" ></MenuItem>
+                <MenuItem Header="Symmetry" Click="MenuItem_Click_4"></MenuItem>
+            </MenuItem>
+            <MenuItem Header="Solve" Height="25" FontFamily="Times New Roman" FontSize="16">
+                <MenuItem Header="Gauss" Click="MenuItem_Click_5"></MenuItem>
+                <MenuItem Header="Zeidel"></MenuItem>
+            </MenuItem>
         </Menu>
-
-
+        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Disabled" 
+                  Grid.Column="1"
+                  Grid.ColumnSpan="4"
+                  Grid.Row="4"
+                  Grid.RowSpan="5">
+            <DataGrid x:Name="massive"                       
+                      HeadersVisibility="None"
+                      CanUserAddRows="false"
+                      HorizontalAlignment="Left"
+                      VerticalAlignment="Top"                  
+                      VerticalScrollBarVisibility="Disabled"
+                      HorizontalScrollBarVisibility="Disabled"
+                      ScrollViewer.CanContentScroll="False"
+                      HorizontalContentAlignment="Center"
+                      VerticalContentAlignment="Center"
+                      FontFamily="Times New Roman"
+                      FontSize="14"
+                      />
+        </ScrollViewer>
+        
+        <DataGrid x:Name="solution" 
+                  Grid.Column="6"
+                  Grid.Row="4"
+                  Grid.RowSpan="5"
+                  HeadersVisibility="None"
+                  CanUserAddRows="false"
+                  HorizontalAlignment="Left"
+                  VerticalAlignment="Top"                  
+                  VerticalScrollBarVisibility="Disabled"
+                  HorizontalScrollBarVisibility="Disabled"
+                  ScrollViewer.CanContentScroll="False"
+                  HorizontalContentAlignment="Center"
+                  VerticalContentAlignment="Center"
+                  FontFamily="Times New Roman"
+                  FontSize="14"
+                  />
+        <StackPanel Grid.Column="6" 
+                    Grid.Row="4"
+                    Grid.RowSpan="5"
+                    HorizontalAlignment="Left"      
+                    VerticalAlignment="Top"/>
 
     </Grid>
+    
 </Window>

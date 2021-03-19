@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Data;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -21,48 +22,38 @@ namespace SLAE_calc
     /// </summary>
     public partial class MainWindow : Window
     {
-        public int Max_Eqv = 10;    //Максимальное количество уравнений  
+        public int Max_Eqv = 100;    //Максимальное количество уравнений  
         int NumOfEqn;
         SLAE slae;
-        TextBox[] tb;
 
         public MainWindow()
-        {            
-            InitializeComponent();
-        }
-        private void Tb_numofeqn_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
-            e.Handled = !IsNumOfEqn(e.Text);
-            TextBox textBox = (TextBox)sender;
-            if (IsNumOfEqn(e.Text))
+            slae = new SLAE(2);
+            InitializeComponent();
+            NumOfEqn = int.Parse(Tb_numofeqn.Text);            
+            DataTable_Refresh();
+        }
+        private void Tb_numofeqn_TextChanged(object sender, TextChangedEventArgs e)
+        {   
+            if (Tb_numofeqn.Text != "")
             {
-                if (e.Text != "")
+                if (int.Parse(Tb_numofeqn.Text) > Max_Eqv)
                 {
-                    if (e.Text[0] != '0')
-                    {
-                        if (int.Parse(e.Text) > Max_Eqv)
-                        {
-                            tb_numofeqn.Text = Convert.ToString(Max_Eqv);
-                        }
-                        if (int.Parse(e.Text) < 2)
-                        {
-                            tb_numofeqn.Text = "2";
-                        }
-                    }
-                    else
-                    {
-                        tb_numofeqn.Text = tb_numofeqn.Text.Remove(0, 1);    //если первый символ строки "0", удаляет его
-                    }
+                    Tb_numofeqn.Text = Convert.ToString(Max_Eqv);
                 }
-                else
+                if (int.Parse(Tb_numofeqn.Text) < 2)
                 {
-                    tb_numofeqn.Text = Convert.ToString(2);
+                    Tb_numofeqn.Text = "2";
                 }
-                if (Panel1 != null)
-                {
-                    Panel1_Refresh(sender, e);
-                }
-            }            
+            }
+            else
+            {
+                Tb_numofeqn.Text = Convert.ToString(2);
+            }
+            if (massive != null)
+            {
+                DataTable_Refresh();
+            }
         }
         /// <summary>
         /// Кнопка "Увеличение кол-ва уравнений на 1"
@@ -71,11 +62,11 @@ namespace SLAE_calc
         /// <param name="e"></param>
         private void UpArrow_Click(object sender, RoutedEventArgs e)
         {            
-            if (int.Parse(tb_numofeqn.Text) < Max_Eqv)
+            if (int.Parse(Tb_numofeqn.Text) < Max_Eqv)
             {
-                tb_numofeqn.Text = Convert.ToString(int.Parse(tb_numofeqn.Text) + 1);
-                Panel1_Initialized(sender, e);
+                Tb_numofeqn.Text = Convert.ToString(int.Parse(Tb_numofeqn.Text) + 1);
             }
+            DataTable_Refresh();
         }
         /// <summary>
         /// Кнопка "Уменьшение кол-ва уравнений на 1"
@@ -84,83 +75,14 @@ namespace SLAE_calc
         /// <param name="e"></param>
         private void BotArrow_Click(object sender, RoutedEventArgs e)
         {
-            if (int.Parse(tb_numofeqn.Text) > 2)
+            if (int.Parse(Tb_numofeqn.Text) > 2)
             {
-                tb_numofeqn.Text = Convert.ToString(int.Parse(tb_numofeqn.Text) - 1);
-                Panel1_Initialized(sender, e);
+                Tb_numofeqn.Text = Convert.ToString(int.Parse(Tb_numofeqn.Text) - 1);
             }
+            DataTable_Refresh();
         }
 
-        private void Panel1_Initialized(object sender, EventArgs e)
-        {            
-            NumOfEqn = int.Parse(tb_numofeqn.Text);
-            slae = new SLAE(NumOfEqn);
-            Panel1.Children.Clear();
-            tb = new TextBox[NumOfEqn * (NumOfEqn + 1)];
-            int j_end = 0;
-
-            for (int i = 0; i < NumOfEqn; i++)
-            {
-                StackPanel sp = new StackPanel
-                {
-                    Name = "Panel" + i + 2,
-                    Orientation = Orientation.Horizontal
-                };
-                Panel1.Children.Add(sp);
-                for (int j = 0; j < NumOfEqn + 1; j++)
-                {
-                    //Добавление TextBox куда вводятся коэф. матрицы
-                    //Можно прокачать, чтоб не удалялись уже введенные значения! 
-                    tb[j + j_end] = new TextBox();
-                    tb[j + j_end].Text = "0";
-                    tb[j + j_end].Tag = new Point(i, j);
-                    tb[j + j_end].PreviewTextInput += MyPrewiewText;
-                    tb[j + j_end].TextChanged += MyTextChange;
-                    sp.Children.Add(tb[j + j_end]);
-
-                    //Добавление TextBlock'ов переменных
-                    if (j < NumOfEqn - 1)
-                    {
-                        sp.Children.Add(new TextBlock
-                        {
-                            Text = $"x{SubIndex(j)} + "
-                        });
-                    }
-                    else if (j == NumOfEqn - 1)
-                    {
-                        sp.Children.Add(new TextBlock
-                        {
-                            Text = $"x{SubIndex(j)} = "
-                        });
-                    }
-
-                    slae.M[i, j] = int.Parse(tb[j + j_end].Text);   //Перенос данных с GUI в Matrix
-                }
-                j_end += NumOfEqn;
-            }
-                     
-        }
-
-        /// <summary>
-        /// Обновляет измененную переменную в Matrix
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void MyTextChange(object sender, EventArgs e)
-        {
-            //обновляет измененную переменную в Matrix
-            TextBox tb_help = sender as TextBox;
-
-            if (IsNum(tb_help.Text) && tb_help.Text != "-")
-            {
-                Point index = (Point)tb_help.Tag;
-                slae.M[(int)index.X, (int)index.Y] = int.Parse(tb_help.Text);
-            }
-        }
-        private void MyPrewiewText(object sender, TextCompositionEventArgs e)
-        {   
-            e.Handled = !IsNum(e.Text);
-        }
+        
         
         /// <summary>
         /// Кнопка Exit в меню
@@ -171,7 +93,6 @@ namespace SLAE_calc
         {
             this.Close();
         }
-
         /// <summary>
         /// Кнопка Save... в меню
         /// </summary>
@@ -211,12 +132,9 @@ namespace SLAE_calc
                 string filename = dlg.FileName;
                 slae.Load(filename);
             }
-
-            //обновление TextBox ов
-            tb_numofeqn.Text = $"{slae.M.GetLength(0)}";
-            Tb_numofeqn_PreviewTextInput(null, null);
-
-
+            Tb_numofeqn.Text = $"{slae.M.GetLength(0)}";
+            DataTable_Refresh();
+            
         }
         /// <summary>
         /// Хот-кей Ctrl+S на сохранение
@@ -231,24 +149,32 @@ namespace SLAE_calc
             }
         }
 
-        /// <summary>
-        /// Запись числа с нижней индексацией
-        /// </summary>
-        /// <param name="j">Число (максимум двузначное)</param>
-        /// <returns>Строка с нижней индексацией</returns>
-        private string SubIndex(int j)
+        private void DataTable_Refresh()
         {
-            string sub_index = null;
-            if (j < 9)
-            {//нижний индекс для цифры
-                sub_index = ((char)(8321 + j)).ToString();
+            NumOfEqn = int.Parse(Tb_numofeqn.Text);
+            slae.Resize(NumOfEqn);
+            massive.RowHeight = 30;
+            massive.ColumnWidth = 30;
+            massive.Width = (NumOfEqn + 1) * massive.RowHeight;
+            massive.Height = (NumOfEqn ) * massive.RowHeight;
+            DataTable dt = new DataTable();
+            for (int i = 0; i < slae.M.GetLength(1); i++)
+            {
+                dt.Columns.Add(i.ToString(), typeof(double));
             }
-            else if ((j > 8) && (j < 99))
-            {//нижний индекс для двузначных чисел      
-                sub_index = ((char)(8320 + ((j + 1) / 10))).ToString() + ((char)(8320 + ((j + 1) % 10))).ToString();
+
+            for (int i = 0; i < slae.M.GetLength(0); i++)
+            {
+                DataRow dr = dt.NewRow();
+                for (int j = 0; j < slae.M.GetLength(1); j++)
+                {
+                    dr[j] = slae.M[i,j];
+                }
+                dt.Rows.Add(dr);
             }
-            return sub_index;
+            massive.ItemsSource = dt.DefaultView;
         }
+
         /// <summary>
         /// Является ли строка числом
         /// </summary>
@@ -283,85 +209,36 @@ namespace SLAE_calc
         private bool IsNumOfEqn(string s)
         {
             int num;
-            bool isnum = int.TryParse(s, out num);
-            if (isnum)
-            {
-                if ((num < 2) || (num > Max_Eqv))
-                {
-                    return false;
-                }
-            }
+            bool isnum = int.TryParse(s, out num);            
             return isnum;
         }
 
-
-        private void Panel1_Refresh(object sender, TextCompositionEventArgs e)
+        /// <summary>
+        /// Data Random
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MenuItem_Click_3(object sender, RoutedEventArgs e)
         {
-            NumOfEqn = int.Parse(e.Text);
-            slae = new SLAE(NumOfEqn);
-            Panel1.Children.Clear();
-            tb = new TextBox[NumOfEqn * (NumOfEqn + 1)];
-            int j_end = 0;
-
-            for (int i = 0; i < NumOfEqn; i++)
-            {
-                StackPanel sp = new StackPanel
-                {
-                    Name = "Panel" + i + 2,
-                    Orientation = Orientation.Horizontal
-                };
-                Panel1.Children.Add(sp);
-                for (int j = 0; j < NumOfEqn + 1; j++)
-                {
-                    //Добавление TextBox куда вводятся коэф. матрицы
-                    //Можно прокачать, чтоб не удалялись уже введенные значения! 
-                    tb[j + j_end] = new TextBox();
-                    tb[j + j_end].Text = "0";
-                    tb[j + j_end].Tag = new Point(i, j);
-                    tb[j + j_end].PreviewTextInput += MyPrewiewText;
-                    tb[j + j_end].TextChanged += MyTextChange;
-                    sp.Children.Add(tb[j + j_end]);
-
-                    //Добавление TextBlock'ов переменных
-                    if (j < NumOfEqn - 1)
-                    {
-                        sp.Children.Add(new TextBlock
-                        {
-                            Text = $"x{SubIndex(j)} + "
-                        });
-                    }
-                    else if (j == NumOfEqn - 1)
-                    {
-                        sp.Children.Add(new TextBlock
-                        {
-                            Text = $"x{SubIndex(j)} = "
-                        });
-                    }
-
-                    slae.M[i, j] = int.Parse(tb[j + j_end].Text);   //Перенос данных с GUI в Matrix
-                }
-                j_end += NumOfEqn;
-            }
+            DataGenerator d = new RandG();
+            slae.M = d.Generate(NumOfEqn);
+            DataTable_Refresh();
         }
-        
+        /// <summary>
+        /// Data Symmetry
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MenuItem_Click_4(object sender, RoutedEventArgs e)
+        {
+            DataGenerator d = new SymRandG();
+            slae.M = d.Generate(NumOfEqn);
+            DataTable_Refresh();
+        }
 
-        //private void OnPasting(object sender, DataObjectPastingEventArgs e)
-        //{
-        //    var stringData = (string)e.DataObject.GetData(typeof(string));
-        //    if (stringData == null || !IsNum(stringData))
-        //    {
-        //        e.CancelCommand();
-        //    }
-        //}DataObject.Pasting="OnPasting"
-
-
-        //private void tb_numofeqn_PreviewKeyDown(object sender, KeyEventArgs e)
-        //{
-        //    if (e.Key == Key.Back || e.Key == Key.Delete)
-        //    {
-        //        e.Handled = false;                
-        //    }
-        //} PreviewKeyDown="tb_numofeqn_PreviewKeyDown" 
-
+        private void MenuItem_Click_5(object sender, RoutedEventArgs e)
+        {
+            slae.Solve(slae.M);
+        }
     }
 }
