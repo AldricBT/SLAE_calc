@@ -82,16 +82,7 @@
                 Content="&#xE1FD;"
                 HorizontalAlignment="Center"/>
 
-        <StackPanel x:Name="Panel1" 
-                    Grid.Column="1" 
-                    HorizontalAlignment="Left" 
-                    Grid.Row="4" 
-                    Grid.ColumnSpan="4" 
-                    VerticalAlignment="Top"
-                    Orientation="Vertical" 
-                    Initialized="Panel1_Initialized" 
-                    TextInput="Panel1_Refresh">
-        </StackPanel>
+        
         <Menu Grid.Row="0"
               Grid.Column="0"
               Grid.ColumnSpan="5"
