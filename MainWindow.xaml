@@ -32,13 +32,13 @@
     </Window.Resources>    
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="29"/>
-            <ColumnDefinition Width="286"/>
-            <ColumnDefinition Width="71"/>
-            <ColumnDefinition Width="36"/>
-            <ColumnDefinition Width="498"/>
-            <ColumnDefinition Width="28"/>
-            <ColumnDefinition Width="45"/>
+            <ColumnDefinition Width="29*"/>
+            <ColumnDefinition Width="286*"/>
+            <ColumnDefinition Width="71*"/>
+            <ColumnDefinition Width="36*"/>
+            <ColumnDefinition Width="300*"/>
+            <ColumnDefinition Width="28*"/>
+            <ColumnDefinition Width="100*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="30*"/>
@@ -87,9 +87,9 @@
 
         <Menu Grid.Row="0"
               Grid.Column="0"
-              Grid.ColumnSpan="7"
+              Grid.ColumnSpan="9"
               Height="25"              
-              VerticalAlignment="Top" Margin="0,0,-0.4,0">
+              VerticalAlignment="Top" >
             <MenuItem Header="File" Height="25" FontFamily="Times New Roman" FontSize="16">
                 <MenuItem Header="Load..." Click="MenuItem_Click_2" ></MenuItem>
                 <MenuItem Header="Save..." Click="MenuItem_Click_1" ></MenuItem>
@@ -105,47 +105,37 @@
                 <MenuItem Header="Zeidel"></MenuItem>
             </MenuItem>
         </Menu>
-        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Disabled" 
+        <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" 
                   Grid.Column="1"
-                  Grid.ColumnSpan="4"
+                  Grid.ColumnSpan="6"
                   Grid.Row="4"
                   Grid.RowSpan="5">
-            <DataGrid x:Name="massive"                       
-                      HeadersVisibility="None"
-                      CanUserAddRows="false"
-                      HorizontalAlignment="Left"
-                      VerticalAlignment="Top"                  
-                      VerticalScrollBarVisibility="Disabled"
-                      HorizontalScrollBarVisibility="Disabled"
-                      ScrollViewer.CanContentScroll="False"
-                      HorizontalContentAlignment="Center"
-                      VerticalContentAlignment="Center"
-                      FontFamily="Times New Roman"
-                      FontSize="14"
-                      />
-        </ScrollViewer>
-        
-        <DataGrid x:Name="solution" 
-                  Grid.Column="6"
-                  Grid.Row="4"
-                  Grid.RowSpan="5"
-                  HeadersVisibility="None"
-                  CanUserAddRows="false"
-                  HorizontalAlignment="Left"
-                  VerticalAlignment="Top"                  
-                  VerticalScrollBarVisibility="Disabled"
-                  HorizontalScrollBarVisibility="Disabled"
-                  ScrollViewer.CanContentScroll="False"
-                  HorizontalContentAlignment="Center"
-                  VerticalContentAlignment="Center"
-                  FontFamily="Times New Roman"
-                  FontSize="14"
-                  />
-        <StackPanel Grid.Column="6" 
+            <StackPanel Orientation="Horizontal">
+                <DataGrid x:Name="massive"                       
+                          HeadersVisibility="None"
+                          CanUserAddRows="false"
+                          HorizontalAlignment="Left"
+                          VerticalAlignment="Top"                  
+                          VerticalScrollBarVisibility="Disabled"
+                          HorizontalScrollBarVisibility="Disabled"
+                          ScrollViewer.CanContentScroll="False"
+                          HorizontalContentAlignment="Center"
+                          VerticalContentAlignment="Center"
+                          FontFamily="Times New Roman"
+                          FontSize="14"
+                          />
+                <StackPanel x:Name="solu_panel" 
+                    Grid.Column="6" 
                     Grid.Row="4"
                     Grid.RowSpan="5"
-                    HorizontalAlignment="Left"      
-                    VerticalAlignment="Top"/>
+                    HorizontalAlignment="Center"      
+                    VerticalAlignment="Top"
+                    Orientation="Vertical"
+                    />
+            </StackPanel>
+        </ScrollViewer>
+        
+        
 
     </Grid>
     

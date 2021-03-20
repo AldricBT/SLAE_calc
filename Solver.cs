@@ -19,7 +19,7 @@ namespace SLAE_calc
         public Solution Solution_vector
         {
             get { return solution_vector; }
-            set { solution_vector = value; }
+            private set { solution_vector = value; }
         }
 
         public abstract Solution Solve(Matrix M);

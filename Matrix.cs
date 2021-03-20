@@ -69,6 +69,23 @@ namespace SLAE_calc
             return Data.GetLength(dim);     
         }
         /// <summary>
+        /// Создает другой объект-копию текущей матрицы
+        /// </summary>
+        /// <param name="m"></param>
+        /// <returns></returns>
+        public Matrix Copy()
+        {
+            Matrix new_m = new Matrix(this.GetLength(0), this.GetLength(1));
+            for (int i = 0; i < this.GetLength(0); i++)
+            {
+                for (int j = 0; j < this.GetLength(1); j++)
+                {
+                    new_m[i, j] = this[i, j];
+                }
+            }
+            return new_m;
+        }
+        /// <summary>
         /// Печать матрицы коэффициентов в консоль
         /// </summary>
         public void Print()

@@ -23,15 +23,17 @@ namespace SLAE_calc
     public partial class MainWindow : Window
     {
         public int Max_Eqv = 100;    //Максимальное количество уравнений  
-        int NumOfEqn;
         SLAE slae;
 
         public MainWindow()
         {
             slae = new SLAE(2);
             InitializeComponent();
-            NumOfEqn = int.Parse(Tb_numofeqn.Text);            
+            slae.NumOfEqn = int.Parse(Tb_numofeqn.Text);            
             DataTable_Refresh();
+            UpArrow.Click += Refresh_solu_panel;
+            BotArrow.Click += Refresh_solu_panel;
+            Tb_numofeqn.TextChanged += Refresh_solu_panel;
         }
         private void Tb_numofeqn_TextChanged(object sender, TextChangedEventArgs e)
         {   
@@ -151,12 +153,12 @@ namespace SLAE_calc
 
         private void DataTable_Refresh()
         {
-            NumOfEqn = int.Parse(Tb_numofeqn.Text);
-            slae.Resize(NumOfEqn);
+            slae.NumOfEqn = int.Parse(Tb_numofeqn.Text);
+            slae.Resize(slae.NumOfEqn);
             massive.RowHeight = 30;
             massive.ColumnWidth = 30;
-            massive.Width = (NumOfEqn + 1) * massive.RowHeight;
-            massive.Height = (NumOfEqn ) * massive.RowHeight;
+            massive.Width = (slae.NumOfEqn + 1) * massive.RowHeight;
+            massive.Height = (slae.NumOfEqn) * massive.RowHeight;
             DataTable dt = new DataTable();
             for (int i = 0; i < slae.M.GetLength(1); i++)
             {
@@ -174,7 +176,26 @@ namespace SLAE_calc
             }
             massive.ItemsSource = dt.DefaultView;
         }
-
+        /// <summary>
+        /// Заполняет столбец решений
+        /// </summary>
+        private void Fill_solu_panel()
+        {            
+            for (int i = 0; i < slae.NumOfEqn; i++)
+            {
+                solu_panel.Children.Add(new TextBlock
+                {
+                    Text = $"x{SubIndex(i)} = {Math.Round(slae.Solu.Solution_vector[i], 2)}",
+                    FontSize = 14,
+                    FontFamily = new FontFamily("Times New Roman"),
+                    Height = 15
+                });
+            }
+        }
+        private void Refresh_solu_panel(object sender, RoutedEventArgs e)
+        {
+            solu_panel.Children.Clear();
+        }
         /// <summary>
         /// Является ли строка числом
         /// </summary>
@@ -202,6 +223,24 @@ namespace SLAE_calc
             }
         }
         /// <summary>
+        /// Запись числа с нижней индексацией
+        /// </summary>
+        /// <param name="j">Число (максимум двузначное)</param>
+        /// <returns>Строка с нижней индексацией</returns>
+        private string SubIndex(int j)
+        {
+            string sub_index = null;
+            if (j < 9)
+            {//нижний индекс для цифры
+                sub_index = ((char)(8321 + j)).ToString();
+            }
+            else if ((j > 8) && (j < 99))
+            {//нижний индекс для двузначных чисел      
+                sub_index = ((char)(8320 + ((j + 1) / 10))).ToString() + ((char)(8320 + ((j + 1) % 10))).ToString();
+            }
+            return sub_index;
+        }
+        /// <summary>
         /// Проверяет адекватность ввода количества уравнений
         /// </summary>
         /// <param name="s">Строка на вводе</param>
@@ -221,7 +260,7 @@ namespace SLAE_calc
         private void MenuItem_Click_3(object sender, RoutedEventArgs e)
         {
             DataGenerator d = new RandG();
-            slae.M = d.Generate(NumOfEqn);
+            slae.Generate(d);
             DataTable_Refresh();
         }
         /// <summary>
@@ -232,13 +271,14 @@ namespace SLAE_calc
         private void MenuItem_Click_4(object sender, RoutedEventArgs e)
         {
             DataGenerator d = new SymRandG();
-            slae.M = d.Generate(NumOfEqn);
+            slae.Generate(d);
             DataTable_Refresh();
         }
 
         private void MenuItem_Click_5(object sender, RoutedEventArgs e)
         {
-            slae.Solve(slae.M);
+            slae.Solve(slae.M, new Gauss());
+            Fill_solu_panel();
         }
     }
 }

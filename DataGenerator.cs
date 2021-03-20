@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SLAE_calc
 {
-    abstract class DataGenerator
+    public abstract class DataGenerator
     {
         //private Matrix m;
         //public Matrix M

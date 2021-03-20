@@ -14,7 +14,8 @@ namespace SLAE_calc
         private Loader load;
         private Matrix m;
         private Solution solu;
-        private Solver solv;        
+        private Solver solv;
+        private DataGenerator data_gen;
 
         public SLAE(int NumOfEqn)
         {
@@ -34,7 +35,7 @@ namespace SLAE_calc
         public int NumOfEqn
         {
             get { return numofeqn; }
-            private set { numofeqn = value; }
+            set { numofeqn = value; }
         }
         public Matrix M
         {
@@ -61,16 +62,14 @@ namespace SLAE_calc
             load.Load(path);
         }
         
-        public void Solve(Matrix m)
+        public void Solve(Matrix m, Solver method)
         {
-            if (solv is Gauss)
-            {
-                solu = (solv as Gauss).Solve(m);
-            }
-            //else if (solv is Zeidel)
-            //{
-            //    solu = (solv as Zeidel).Solve(m);
-            //}            
+            solu = method.Solve(m);
+        }
+
+        public void Generate(DataGenerator method)
+        {
+            m = method.Generate(m.GetLength(0));
         }
     }
 }

@@ -10,7 +10,8 @@ namespace SLAE_calc
     {
         
         public override Solution Solve(Matrix m)
-        {            
+        {
+            Matrix m_help = m.Copy();
             int NumOfEqn = m.GetLength(0);            
             double d,s;
             Solution x = new Solution(NumOfEqn);
@@ -18,10 +19,10 @@ namespace SLAE_calc
             {
                 for (int j = k + 1; j < NumOfEqn; j++)
                 {
-                    d = m[j, k] / m[k, k];
+                    d = m_help[j, k] / m_help[k, k];
                     for (int i = k; i < NumOfEqn + 1; i++)
                     {
-                        m[j, i] = m[j, i] - d * m[k, i];
+                        m_help[j, i] = m_help[j, i] - d * m_help[k, i];
                     }
                 }
             }
@@ -31,10 +32,10 @@ namespace SLAE_calc
                 d = 0;
                 for (int j = k; j < NumOfEqn; j++)
                 {
-                    s = m[k, j] * x.Solution_vector[j];
+                    s = m_help[k, j] * x.Solution_vector[j];
                     d += s;
                 }
-                x.Solution_vector[k] = (m[k,NumOfEqn] - d) / m[k, k];
+                x.Solution_vector[k] = (m_help[k,NumOfEqn] - d) / m_help[k, k];
             }
             return x;
         }
