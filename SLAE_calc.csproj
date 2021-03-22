@@ -57,7 +57,9 @@
     </ApplicationDefinition>
     <Compile Include="DataGenerator.cs" />
     <Compile Include="Gauss.cs" />
+    <Compile Include="ISolution.cs" />
     <Compile Include="Loader.cs" />
+    <Compile Include="LoadException.cs" />
     <Compile Include="RandG.cs" />
     <Compile Include="Saver.cs" />
     <Compile Include="SLAE.cs" />
@@ -65,6 +67,7 @@
     <Compile Include="Solver.cs" />
     <Compile Include="SymRandG.cs" />
     <Compile Include="Vector.cs" />
+    <Compile Include="Zeidel.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

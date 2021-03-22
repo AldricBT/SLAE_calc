@@ -10,7 +10,7 @@ namespace SLAE_calc
     {
         private double[,] data;
 
-        public double[,] Data
+        public virtual double[,] Data
         {
             get { return data; }
             set { data = value; }
@@ -27,7 +27,7 @@ namespace SLAE_calc
             }
         }
 
-        public double this[int i, int j]
+        public virtual double this[int i, int j]
         {
             get { return Data[i, j]; }
             set { Data[i, j] = value; }
@@ -37,7 +37,7 @@ namespace SLAE_calc
         /// </summary>
         /// <param name="RowCount">Количество строк нового массива</param>
         /// <param name="ColCount">Количество столбцов нового массива</param>
-        public void Resize(int RowCount, int ColCount)
+        public virtual void Resize(int RowCount, int ColCount)
         {
             double[,] Data_help = new double[RowCount, ColCount];
             for (int i = 0; i < Data.GetLength(0); i++)
@@ -64,7 +64,7 @@ namespace SLAE_calc
             }
             Data = Data_help;
         }
-        public int GetLength(int dim)
+        public virtual int GetLength(int dim)
         {
             return Data.GetLength(dim);     
         }

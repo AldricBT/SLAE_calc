@@ -23,44 +23,48 @@ namespace SLAE_calc
                 Data[i] = 0;
             }
         }
+        //public Vector(int length, bool solution_exist)
+        //{
+        //    if (solution_exist)
+        //    {
+        //        Data = new double[length];
+        //        for (int i = 0; i < length; i++)
+        //        {
+        //            Data[i] = 0;
+        //        }
+        //    }
+        //    else
+        //    {
+        //        Data = null;
+        //    }
+        //}
 
         public double this[int i]
         {
             get { return Data[i]; }
             set { Data[i] = value; }
         }
-        ///// <summary>
-        ///// Изменяет размер текущего массива
-        ///// </summary>
-        ///// <param name="RowCount">Количество строк нового массива</param>
-        ///// <param name="ColCount">Количество столбцов нового массива</param>
-        //public void Resize(int RowCount, int ColCount)
-        //{
-        //    double[,] Data_help = new double[RowCount, ColCount];
-        //    for (int i = 0; i < Data.GetLength(0); i++)
-        //    {
-        //        for (int j = 0; j < Data.GetLength(1); j++)
-        //        {
-        //            try
-        //            {
-        //                Data_help[i, j] = Data[i, j];
-        //            }
-        //            catch (Exception)
-        //            {
+        public virtual void Resize(int length)
+        {
+            double[] data_help = new double[length];
+            for (int i = 0; i < Data.GetLength(0); i++)
+            { 
+                try
+                {
+                    data_help[i] = data[i];
+                }
+                catch (Exception)
+                {
 
-        //            }
-
-        //        }
-        //    }
-        //    for (int i = Data.GetLength(0); i < RowCount; i++)
-        //    {
-        //        for (int j = Data.GetLength(1); j < ColCount; j++)
-        //        {
-        //            Data_help[i, j] = 0;
-        //        }
-        //    }
-        //    Data = Data_help;
-        //}
+                }
+            }
+            for (int i = Data.GetLength(0); i < length; i++)
+            {
+                data_help[i] = 0;
+               
+            }
+            Data = data_help;
+        }
         public int GetLength()
         {
             return Data.Length;

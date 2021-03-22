@@ -29,7 +29,7 @@
             <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="FontFamily" Value="Times New Roman"/>
         </Style>
-    </Window.Resources>    
+    </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="29*"/>
@@ -91,7 +91,7 @@
               Height="25"              
               VerticalAlignment="Top" >
             <MenuItem Header="File" Height="25" FontFamily="Times New Roman" FontSize="16">
-                <MenuItem Header="Load..." Click="MenuItem_Click_2" ></MenuItem>
+                <MenuItem x:Name="load_button" Header="Load..." Click="MenuItem_Click_2" ></MenuItem>
                 <MenuItem Header="Save..." Click="MenuItem_Click_1" ></MenuItem>
                 <Separator/>
                 <MenuItem Header="Exit" Click="MenuItem_Click"></MenuItem>
@@ -102,7 +102,7 @@
             </MenuItem>
             <MenuItem Header="Solve" Height="25" FontFamily="Times New Roman" FontSize="16">
                 <MenuItem Header="Gauss" Click="MenuItem_Click_5"></MenuItem>
-                <MenuItem Header="Zeidel"></MenuItem>
+                <MenuItem Header="Zeidel" Click="MenuItem_Click_6"></MenuItem>
             </MenuItem>
         </Menu>
         <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" 
@@ -134,9 +134,9 @@
                     />
             </StackPanel>
         </ScrollViewer>
-        
-        
+
+
 
     </Grid>
-    
+
 </Window>

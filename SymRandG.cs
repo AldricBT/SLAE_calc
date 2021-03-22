@@ -19,11 +19,11 @@ namespace SLAE_calc
                 {
                     if (i == j)
                     {
-                        m[i, j] = r.Next(10, 51);
+                        m[i, j] = r.Next(30, 101);
                     }
                     else if (j > i)
                     {
-                        m[i, j] = r.Next(-20, 11);
+                        m[i, j] = r.Next(-10, 11);
                     }
                     else
                     {

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Data;
 using System.Threading.Tasks;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -14,6 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Win32;
+using System.Globalization;
 
 namespace SLAE_calc
 {
@@ -24,7 +26,7 @@ namespace SLAE_calc
     {
         public int Max_Eqv = 100;    //Максимальное количество уравнений  
         SLAE slae;
-
+        
         public MainWindow()
         {
             slae = new SLAE(2);
@@ -33,7 +35,8 @@ namespace SLAE_calc
             DataTable_Refresh();
             UpArrow.Click += Refresh_solu_panel;
             BotArrow.Click += Refresh_solu_panel;
-            Tb_numofeqn.TextChanged += Refresh_solu_panel;
+            Tb_numofeqn.TextChanged += Refresh_solu_panel;     
+            
         }
         private void Tb_numofeqn_TextChanged(object sender, TextChangedEventArgs e)
         {   
@@ -134,9 +137,16 @@ namespace SLAE_calc
                 string filename = dlg.FileName;
                 slae.Load(filename);
             }
-            Tb_numofeqn.Text = $"{slae.M.GetLength(0)}";
-            DataTable_Refresh();
-            
+            if (slae.Load_error)
+            {
+                MessageBox.Show("Ошибка загрузки файла", "Ошибка!");
+            }
+            else
+            {
+                Tb_numofeqn.Text = $"{slae.M.GetLength(0)}";
+                DataTable_Refresh();
+                Fill_solu_panel();
+            }            
         }
         /// <summary>
         /// Хот-кей Ctrl+S на сохранение
@@ -180,19 +190,43 @@ namespace SLAE_calc
         /// Заполняет столбец решений
         /// </summary>
         private void Fill_solu_panel()
-        {            
-            for (int i = 0; i < slae.NumOfEqn; i++)
+        {
+            Refresh_solu_panel();
+            if (slae.Solu.Solution_exist)
+            {
+                for (int i = 0; i < slae.NumOfEqn; i++)
+                {
+                    solu_panel.Children.Add(new TextBlock
+                    {
+                        Text = $"x{SubIndex(i)} = {Math.Round(slae.Solu.Solution_vector[i], 3)}",
+                        FontSize = 18,
+                        FontFamily = new FontFamily("Times New Roman"),
+                        Height = 20,
+                        FontStyle = FontStyles.Normal
+                    });
+                }
+                solu_panel.Children.Add(new TextBlock
+                {
+                    Text = $"Погрешность решения {slae.Solu.Error.ToString("E", CultureInfo.InvariantCulture)}",
+                    FontSize = 18,
+                    FontFamily = new FontFamily("Times New Roman"),
+                    FontStyle = FontStyles.Normal
+                });
+            }
+            else
             {
                 solu_panel.Children.Add(new TextBlock
                 {
-                    Text = $"x{SubIndex(i)} = {Math.Round(slae.Solu.Solution_vector[i], 2)}",
-                    FontSize = 14,
-                    FontFamily = new FontFamily("Times New Roman"),
-                    Height = 15
+                    Text = "Решения нет"
                 });
             }
+            
         }
         private void Refresh_solu_panel(object sender, RoutedEventArgs e)
+        {
+            solu_panel.Children.Clear();
+        }
+        private void Refresh_solu_panel()
         {
             solu_panel.Children.Clear();
         }
@@ -275,10 +309,61 @@ namespace SLAE_calc
             DataTable_Refresh();
         }
 
+        /// <summary>
+        /// Gauss
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MenuItem_Click_5(object sender, RoutedEventArgs e)
         {
-            slae.Solve(slae.M, new Gauss());
+            //Thread solver = new Thread(delegate() { new Gauss(); });
+            //solver.Start();
+            //ProgressBar_Solve(new Gauss());
+
+            slae.Solve(slae.M, new Gauss(), null);
             Fill_solu_panel();
         }
+        /// <summary>
+        /// Zeidel
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MenuItem_Click_6(object sender, RoutedEventArgs e)
+        {
+            //ProgressBar_Solve(new Zeidel());
+
+            slae.Solve(slae.M, new Zeidel(), null);
+            Fill_solu_panel();
+        }
+
+        //private void ProgressBar_Solve(Solver method)
+        //{
+        //    TextBlock tt = new TextBlock();
+        //    tt.Text = "Hi";
+
+        //    StackPanel panel_bar = new StackPanel();
+        //    ProgressBar bar = new ProgressBar
+        //    {
+        //        Height = 30,
+        //        Width = 180,
+        //        Maximum = 2*slae.M.GetLength(0),
+        //        Minimum = 0,
+        //    };
+        //    Window w1 = new Window
+        //    {
+        //        Title = "Прогресс решения",
+        //        MaxHeight = 200,
+        //        MaxWidth = 600,
+        //        MinHeight = 200,
+        //        MinWidth = 600,
+        //        Content = panel_bar,
+        //    };
+            
+        //    panel_bar.Children.Add(bar);
+        //    panel_bar.Children.Add(tt);
+        //    w1.Show();
+        //    slae.Solve(slae.M, method, bar);
+        //    Fill_solu_panel();
+        //}
     }
 }
