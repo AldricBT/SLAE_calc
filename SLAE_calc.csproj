@@ -55,19 +55,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="DataGenerator.cs" />
-    <Compile Include="Gauss.cs" />
-    <Compile Include="ISolution.cs" />
-    <Compile Include="Loader.cs" />
-    <Compile Include="LoadException.cs" />
-    <Compile Include="RandG.cs" />
-    <Compile Include="Saver.cs" />
-    <Compile Include="SLAE.cs" />
-    <Compile Include="Solution.cs" />
-    <Compile Include="Solver.cs" />
-    <Compile Include="SymRandG.cs" />
-    <Compile Include="Vector.cs" />
-    <Compile Include="Zeidel.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -82,7 +69,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Matrix.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -107,6 +93,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SLAE_core_class\SLAE_core.csproj">
+      <Project>{5c5a672f-0d0c-4c33-a2e1-eebf66161377}</Project>
+      <Name>SLAE_core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

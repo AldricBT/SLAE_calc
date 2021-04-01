@@ -16,6 +16,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Win32;
 using System.Globalization;
+using SLAE_core;
 
 namespace SLAE_calc
 {
@@ -26,7 +27,7 @@ namespace SLAE_calc
     {
         public int Max_Eqv = 100;    //Максимальное количество уравнений  
         SLAE slae;
-        
+        DataTable dt = new DataTable();
         public MainWindow()
         {
             slae = new SLAE(2);
@@ -164,12 +165,16 @@ namespace SLAE_calc
         private void DataTable_Refresh()
         {
             slae.NumOfEqn = int.Parse(Tb_numofeqn.Text);
-            slae.Resize(slae.NumOfEqn);
+            slae.Resize(int.Parse(Tb_numofeqn.Text));
+            slae.IsSolved = false;
             massive.RowHeight = 30;
             massive.ColumnWidth = 30;
             massive.Width = (slae.NumOfEqn + 1) * massive.RowHeight;
             massive.Height = (slae.NumOfEqn) * massive.RowHeight;
-            DataTable dt = new DataTable();
+            dt = new DataTable();
+            //dt.Columns.Clear();
+            //dt.Rows.Clear();
+            //dt.Clear();
             for (int i = 0; i < slae.M.GetLength(1); i++)
             {
                 dt.Columns.Add(i.ToString(), typeof(double));
@@ -185,45 +190,71 @@ namespace SLAE_calc
                 dt.Rows.Add(dr);
             }
             massive.ItemsSource = dt.DefaultView;
+            if (solu_panel != null)
+            {
+                Fill_solu_panel();
+            }
+            dt.ColumnChanged += Dt_ColumnChanged;
+            
         }
+                
+        private void Dt_ColumnChanged(object sender, DataColumnChangeEventArgs e)
+        {
+            if (dt.Rows.IndexOf(e.Row) != -1)
+            {
+                slae.M[dt.Rows.IndexOf(e.Row), e.Column.Ordinal] = (double)e.ProposedValue;
+                slae.IsSolved = false;
+                if (solu_panel != null)
+                {
+                    Fill_solu_panel();
+                }
+            }
+            
+            //slae.Roots.Solution_vector[1] = 2;
+        }
+
         /// <summary>
         /// Заполняет столбец решений
         /// </summary>
         private void Fill_solu_panel()
         {
             Refresh_solu_panel();
-            if (slae.Solu.Solution_exist)
+            if (slae.IsSolved)
             {
-                for (int i = 0; i < slae.NumOfEqn; i++)
+                if (slae.Roots.Solution_exist)
                 {
+                    for (int i = 0; i < slae.NumOfEqn; i++)
+                    {
+                        solu_panel.Children.Add(new TextBlock
+                        {
+                            Text = $"x{SubIndex(i)} = {Math.Round(slae.Roots.Solution_vector[i], 3)}",
+                            FontSize = 18,
+                            FontFamily = new FontFamily("Times New Roman"),
+                            Height = 20,
+                            FontStyle = FontStyles.Normal
+                        });
+                    }
                     solu_panel.Children.Add(new TextBlock
                     {
-                        Text = $"x{SubIndex(i)} = {Math.Round(slae.Solu.Solution_vector[i], 3)}",
+                        Text = $"Погрешность решения {slae.Roots.Error.ToString("E", CultureInfo.InvariantCulture)}",
                         FontSize = 18,
                         FontFamily = new FontFamily("Times New Roman"),
-                        Height = 20,
                         FontStyle = FontStyles.Normal
                     });
                 }
-                solu_panel.Children.Add(new TextBlock
+                else
                 {
-                    Text = $"Погрешность решения {slae.Solu.Error.ToString("E", CultureInfo.InvariantCulture)}",
-                    FontSize = 18,
-                    FontFamily = new FontFamily("Times New Roman"),
-                    FontStyle = FontStyles.Normal
-                });
-            }
-            else
-            {
-                solu_panel.Children.Add(new TextBlock
-                {
-                    Text = "Решения нет"
-                });
-            }
+                    solu_panel.Children.Add(new TextBlock
+                    {
+                        Text = "Решения нет"
+                    });
+                }
+            }           
             
         }
         private void Refresh_solu_panel(object sender, RoutedEventArgs e)
         {
+            slae.IsSolved = false;            
             solu_panel.Children.Clear();
         }
         private void Refresh_solu_panel()
@@ -319,8 +350,8 @@ namespace SLAE_calc
             //Thread solver = new Thread(delegate() { new Gauss(); });
             //solver.Start();
             //ProgressBar_Solve(new Gauss());
-
-            slae.Solve(slae.M, new Gauss(), null);
+            slae.Method = new Gauss();
+            slae.Solve();
             Fill_solu_panel();
         }
         /// <summary>
@@ -331,8 +362,8 @@ namespace SLAE_calc
         private void MenuItem_Click_6(object sender, RoutedEventArgs e)
         {
             //ProgressBar_Solve(new Zeidel());
-
-            slae.Solve(slae.M, new Zeidel(), null);
+            slae.Method = new Zeidel();
+            slae.Solve();
             Fill_solu_panel();
         }
 
@@ -346,7 +377,7 @@ namespace SLAE_calc
         //    {
         //        Height = 30,
         //        Width = 180,
-        //        Maximum = 2*slae.M.GetLength(0),
+        //        Maximum = 2 * slae.M.GetLength(0),
         //        Minimum = 0,
         //    };
         //    Window w1 = new Window
@@ -358,11 +389,11 @@ namespace SLAE_calc
         //        MinWidth = 600,
         //        Content = panel_bar,
         //    };
-            
+
         //    panel_bar.Children.Add(bar);
         //    panel_bar.Children.Add(tt);
         //    w1.Show();
-        //    slae.Solve(slae.M, method, bar);
+        //    slae.Solve(slae.M, method);
         //    Fill_solu_panel();
         //}
     }
